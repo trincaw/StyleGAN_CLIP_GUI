@@ -13,10 +13,10 @@ class View(QMainWindow):
         self.network_path.setGeometry(20, 20, 260, 30)
         self.network_path.setPlaceholderText('Network PKL File')
 
-        self.output_path = QLineEdit(self)
-        self.output_path.setGeometry(20, 20, 260, 30)
-        self.output_path.setPlaceholderText('Output path')
-
+        # self.output_path = QLineEdit(self)
+        # self.output_path.setGeometry(20, 20, 260, 30)
+        # self.output_path.setPlaceholderText('Output path')
+        self.output_path = 'output'
         self.browse_btn = QPushButton('Browse', self)
         self.browse_btn.setGeometry(290, 20, 80, 30)
         self.browse_btn.clicked.connect(self.browse_model)
@@ -56,11 +56,18 @@ class View(QMainWindow):
     def set_controller(self, controller: Controller):
         self.controller = controller
 
+    def set_output_dir(self, path: str):
+        self.output_path.setText(path)
+
+    def set_model_dir(self, path: str):
+        self.network_path.setText(path)
+
     def browse_model(self):
         file_dialog = QFileDialog()
         file_path, _ = file_dialog.getOpenFileName(
             self, 'Select Model PKL File', '', 'PKL Files (*.pkl)')
         self.network_path.setText(file_path)
+        self.controller.set_model_path(file_path)
 
     def generate_image(self):
         self.controller.generate_image()

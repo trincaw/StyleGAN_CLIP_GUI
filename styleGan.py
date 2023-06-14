@@ -38,7 +38,7 @@ def make_transform(translate: Tuple[float, float], angle: float):
 
 class styleGan:
 
-    def set_network_pkl(self, network_pkl):
+    def set_model_dir(self, network_pkl):
         self.network_pkl = network_pkl
 
     def set_output_dir(self, outdir):
@@ -46,6 +46,7 @@ class styleGan:
 
     def generate_images(self, seeds: List[int], truncation_psi: float, noise_mode: str, translate: Tuple[float, float], rotate: float, class_idx: Optional[int]):
         print('Loading networks from "%s"...' % self.network_pkl)
+        print(seeds, truncation_psi, noise_mode, translate, rotate, class_idx)
         device = torch.device('cuda')
         with dnnlib.util.open_url(self.network_pkl) as f:
             G = legacy.load_network_pkl(f)['G_ema'].to(device)  # type: ignore
