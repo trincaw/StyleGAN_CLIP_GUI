@@ -113,11 +113,14 @@ class View(QMainWindow):
         self.generate_random_btn.setEnabled(True)
 
     def generate_image_from_seed(self):
+
         truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx = self.validate_generation()
 
         self.generate_btn.setEnabled(False)
         r = random.randint(1, 99999)
+
         s = self.validate_int(self.seeds_edit.text(), default=r)
+        print(s)
 
         self.controller.generate_image(
             [s], truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx)
@@ -125,79 +128,46 @@ class View(QMainWindow):
 
     def validate_generation(self):
 
-        try:
-            truncation_psi = self.validate_float(
-                self.trunc_edit.value(), default=0.7)
-        except ValueError:
-            QMessageBox.critical(self, 'Error',
-                                 'Invalid truncation psi value')
-            return None
-        try:
-            noise_mode = 'const' if self.noise_edit.text(
-            ) == '' else self.noise_edit.text()
-        except ValueError:
-            QMessageBox.critical(self, 'Error',
-                                 'Invalid noise mode value')
-            return None
-        try:
-            translate_x = self.validate_int(
-                self.translate_x_edit.text(), default=0)
-        except ValueError:
-            QMessageBox.critical(self, 'Error',
-                                 'Invalid Translate X value')
-            return None
+        truncation_psi = self.validate_float(
+            self.trunc_edit.value(), default=0.7)
 
-        try:
-            translate_y = self.validate_int(
-                self.translate_y_edit.text(), default=0)
-        except ValueError:
-            QMessageBox.critical(self, 'Error',
-                                 'Invalid Translate Y value')
-            return None
+        noise_mode = 'const' if self.noise_edit.text(
+        ) == '' else self.noise_edit.text()
 
-        try:
-            rotate = self.validate_int(self.rotate_edit.text(), default=0)
-        except ValueError:
-            QMessageBox.critical(self, 'Error', 'Invalid Rotate value')
-            return None
+        translate_x = self.validate_int(
+            self.translate_x_edit.text(), default=0, error="Invalid Translate X value")
 
-        try:
-            class_idx = self.validate_int(
-                self.class_edit.text(), default=None)
-        except ValueError:
-            QMessageBox.critical(self, 'Error',
-                                 'Invalid Class Index value')
-            return None
+        translate_y = self.validate_int(
+            self.translate_y_edit.text(), default=0, error="Invalid Translate Y value")
+
+        rotate = self.validate_int(
+            self.rotate_edit.text(), default=0, error="Invalid Rotate value")
+
+        class_idx = self.validate_int(
+            self.class_edit.text(), default=None, error="Invalid Class Index value")
 
         return truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx
 
-    def validate_int(self, value, default=None):
+    def validate_int(self, value, default=None, error="Generic Error"):
         try:
             return int(value) if value else default
         except ValueError:
+            QMessageBox.critical(self, 'Error', error)
             return default
 
-    def validate_float(self, value, default=None):
+    def validate_float(self, value, default=None, error="Generic Error"):
         try:
             return float(value) if value else default
         except ValueError:
+            QMessageBox.critical(self, 'Error', error)
             return default
 
-    def validate_seeds(self, value):
+    def validate_seeds(self, value, default, error="Generic Error"):
         if value:
             seeds_list = value.split(',')
             try:
                 seeds = [int(seed) for seed in seeds_list]
-                return seeds
+                return value
             except ValueError:
-                pass
-        return None
-
-    def validate_translate(self, value):
-        if value:
-            try:
-                translate_x, translate_y = value.split(',')
-                return float(translate_x), float(translate_y)
-            except ValueError:
-                pass
-        return 0, 0
+                QMessageBox.critical(self, 'Error', error)
+        return default

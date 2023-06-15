@@ -6,7 +6,7 @@ from controller import Controller
 from styleGan import styleGan
 import os
 
-# "C:\Users\nico\AppData\Local\torch_extensions\torch_extensions\Cache\py38_cu118\upfirdn2d_plugin"
+# C:\Users\nico\AppData\Local\torch_extensions\torch_extensions\Cache\py38_cu118\
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
