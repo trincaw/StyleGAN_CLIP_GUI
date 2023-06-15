@@ -26,8 +26,8 @@ class Controller:
         self.set_output_path(output_path)
 
     def generate_image(self):
-        s = self.validate_int(self.view.seeds_edit.text(), default=[1])
-        seeds = [s]
+        s = self.validate_int(self.view.seeds_edit.text(), default=1)
+        seed = [s]
         truncation_psi = self.validate_float(
             self.view.trunc_edit.text(), default=0.7)
         noise_mode = 'const' if self.view.noise_edit.text(
@@ -40,10 +40,10 @@ class Controller:
         class_idx = self.validate_int(
             self.view.class_edit.text(), default=None)
 
-        print(seeds, truncation_psi, noise_mode,
+        print(seed, truncation_psi, noise_mode,
               translate_x, translate_y, rotate, class_idx)
         # try:
-        self.generator.generate_images(seeds, truncation_psi,
+        self.generator.generate_images(seed, truncation_psi,
                                        noise_mode, (translate_x, translate_y), rotate, class_idx)
         # except Exception as e:
         #     error_message = f"Error occurred during image generation:\n{str(e)}"
