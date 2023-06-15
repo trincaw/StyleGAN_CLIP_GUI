@@ -1,5 +1,5 @@
 import sys
-from PyQt5.QtWidgets import QDoubleSpinBox, QMainWindow, QLabel, QPushButton, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QDoubleSpinBox, QMainWindow, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
 from controller import Controller
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
@@ -103,20 +103,101 @@ class View(QMainWindow):
         self.controller.set_output_path(output_path)
 
     def generate_random_image(self):
+        truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx = self.validate_generation()
+
         self.generate_random_btn.setEnabled(False)
         r = random.randint(1, 99999)
-        self.controller.generate_image([r])
+
+        self.controller.generate_image(
+            [r], truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx)
         self.generate_random_btn.setEnabled(True)
 
     def generate_image_from_seed(self):
+        truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx = self.validate_generation()
+
         self.generate_btn.setEnabled(False)
         r = random.randint(1, 99999)
         s = self.validate_int(self.seeds_edit.text(), default=r)
-        self.controller.generate_image([s])
+
+        self.controller.generate_image(
+            [s], truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx)
         self.generate_btn.setEnabled(True)
+
+    def validate_generation(self):
+
+        try:
+            truncation_psi = self.validate_float(
+                self.trunc_edit.value(), default=0.7)
+        except ValueError:
+            QMessageBox.critical(self, 'Error',
+                                 'Invalid truncation psi value')
+            return None
+        try:
+            noise_mode = 'const' if self.noise_edit.text(
+            ) == '' else self.noise_edit.text()
+        except ValueError:
+            QMessageBox.critical(self, 'Error',
+                                 'Invalid noise mode value')
+            return None
+        try:
+            translate_x = self.validate_int(
+                self.translate_x_edit.text(), default=0)
+        except ValueError:
+            QMessageBox.critical(self, 'Error',
+                                 'Invalid Translate X value')
+            return None
+
+        try:
+            translate_y = self.validate_int(
+                self.translate_y_edit.text(), default=0)
+        except ValueError:
+            QMessageBox.critical(self, 'Error',
+                                 'Invalid Translate Y value')
+            return None
+
+        try:
+            rotate = self.validate_int(self.rotate_edit.text(), default=0)
+        except ValueError:
+            QMessageBox.critical(self, 'Error', 'Invalid Rotate value')
+            return None
+
+        try:
+            class_idx = self.validate_int(
+                self.class_edit.text(), default=None)
+        except ValueError:
+            QMessageBox.critical(self, 'Error',
+                                 'Invalid Class Index value')
+            return None
+
+        return truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx
 
     def validate_int(self, value, default=None):
         try:
             return int(value) if value else default
         except ValueError:
             return default
+
+    def validate_float(self, value, default=None):
+        try:
+            return float(value) if value else default
+        except ValueError:
+            return default
+
+    def validate_seeds(self, value):
+        if value:
+            seeds_list = value.split(',')
+            try:
+                seeds = [int(seed) for seed in seeds_list]
+                return seeds
+            except ValueError:
+                pass
+        return None
+
+    def validate_translate(self, value):
+        if value:
+            try:
+                translate_x, translate_y = value.split(',')
+                return float(translate_x), float(translate_y)
+            except ValueError:
+                pass
+        return 0, 0

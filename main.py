@@ -10,10 +10,10 @@ import os
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
+
     view = View()
-    view.show()
-
     styleGan = styleGan()
-
     controller = Controller(view, styleGan)
+
+    view.show()
     sys.exit(app.exec_())

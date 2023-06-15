@@ -26,20 +26,8 @@ class Controller:
         self.set_model_path(path)
         self.set_output_path(output_path)
 
-    def generate_image(self, seed):
+    def generate_image(self, seed, truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx):
         self.view.set_seeds(str(seed[0]))
-        truncation_psi = self.validate_float(
-            self.view.trunc_edit.value(), default=0.7)
-        noise_mode = 'const' if self.view.noise_edit.text(
-        ) == '' else self.view.noise_edit.text()
-        translate_x = self.validate_int(
-            self.view.translate_x_edit.text(), default=0.0)
-        translate_y = self.validate_int(
-            self.view.translate_y_edit.text(), default=0.0)
-        rotate = self.validate_int(self.view.rotate_edit.text(), default=0)
-        class_idx = self.validate_int(
-            self.view.class_edit.text(), default=None)
-
         print(seed, truncation_psi, noise_mode,
               translate_x, translate_y, rotate, class_idx)
         # try:
@@ -49,34 +37,3 @@ class Controller:
         #     error_message = f"Error occurred during image generation:\n{str(e)}"
         #     QMessageBox.critical(self.view, "Error", error_message)
         self.view.set_image(img_path)
-
-    def validate_int(self, value, default=None):
-        try:
-            return int(value) if value else default
-        except ValueError:
-            return default
-
-    def validate_float(self, value, default=None):
-        try:
-            return float(value) if value else default
-        except ValueError:
-            return default
-
-    def validate_seeds(self, value):
-        if value:
-            seeds_list = value.split(',')
-            try:
-                seeds = [int(seed) for seed in seeds_list]
-                return seeds
-            except ValueError:
-                pass
-        return None
-
-    def validate_translate(self, value):
-        if value:
-            try:
-                translate_x, translate_y = value.split(',')
-                return float(translate_x), float(translate_y)
-            except ValueError:
-                pass
-        return 0, 0
