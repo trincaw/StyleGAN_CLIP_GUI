@@ -1,6 +1,7 @@
 from styleGan import styleGan
 from PyQt5.QtWidgets import QMessageBox
 import os
+import random
 
 
 class Controller:
@@ -25,11 +26,10 @@ class Controller:
         self.set_model_path(path)
         self.set_output_path(output_path)
 
-    def generate_image(self):
-        s = self.validate_int(self.view.seeds_edit.text(), default=1)
-        seed = [s]
+    def generate_image(self, seed):
+        self.view.set_seeds(str(seed[0]))
         truncation_psi = self.validate_float(
-            self.view.trunc_edit.text(), default=0.7)
+            self.view.trunc_edit.value(), default=0.7)
         noise_mode = 'const' if self.view.noise_edit.text(
         ) == '' else self.view.noise_edit.text()
         translate_x = self.validate_int(
@@ -43,11 +43,12 @@ class Controller:
         print(seed, truncation_psi, noise_mode,
               translate_x, translate_y, rotate, class_idx)
         # try:
-        self.generator.generate_images(seed, truncation_psi,
-                                       noise_mode, (translate_x, translate_y), rotate, class_idx)
+        img_path = self.generator.generate_images(seed, truncation_psi,
+                                                  noise_mode, (translate_x, translate_y), rotate, class_idx)
         # except Exception as e:
         #     error_message = f"Error occurred during image generation:\n{str(e)}"
         #     QMessageBox.critical(self.view, "Error", error_message)
+        self.view.set_image(img_path)
 
     def validate_int(self, value, default=None):
         try:

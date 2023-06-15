@@ -86,6 +86,9 @@ class styleGan:
                    128).clamp(0, 255).to(torch.uint8)
             PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(
                 f'{self.outdir}/seed{seed:04d}.png')
+        s = seeds[0]
+        img_path = f'{self.outdir}/seed{s:04d}.png'
+        return img_path
 
 # ----------------------------------------------------------------------------
 

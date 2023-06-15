@@ -1,13 +1,16 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QPushButton, QFileDialog, QLineEdit
+from PyQt5.QtWidgets import QDoubleSpinBox, QMainWindow, QLabel, QPushButton, QFileDialog, QLineEdit
 from controller import Controller
+from PyQt5.QtGui import QPixmap
+from PyQt5.QtCore import Qt
+import random
 
 
 class View(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('StyleGAN GUI')
-        self.setGeometry(100, 100, 400, 400)
+        self.setGeometry(100, 100, 790, 400)
 
         self.network_path = QLineEdit(self)
         self.network_path.setGeometry(20, 20, 260, 30)
@@ -29,9 +32,13 @@ class View(QMainWindow):
         self.seeds_edit.setGeometry(20, 120, 150, 30)
         self.seeds_edit.setPlaceholderText('Seeds')
 
-        self.trunc_edit = QLineEdit(self)
+        self.trunc_edit = QDoubleSpinBox(self)
         self.trunc_edit.setGeometry(20, 170, 150, 30)
-        self.trunc_edit.setPlaceholderText('Truncation Psi')
+        self.trunc_edit.setRange(0, 10)  # Set the range of the spin box
+        self.trunc_edit.setSingleStep(0.1)  # Set the step size
+        self.trunc_edit.setDecimals(2)  # Set the number of decimals
+        self.trunc_edit.setSuffix(' Psi')  # Add a suffix
+        self.trunc_edit.setValue(0.7)  # Set the initial value
 
         self.noise_edit = QLineEdit(self)
         self.noise_edit.setGeometry(20, 220, 150, 30)
@@ -55,7 +62,16 @@ class View(QMainWindow):
 
         self.generate_btn = QPushButton('Generate', self)
         self.generate_btn.setGeometry(220, 270, 150, 30)
-        self.generate_btn.clicked.connect(self.generate_image)
+        self.generate_btn.clicked.connect(self.generate_image_from_seed)
+
+        self.image_viewer = QLabel(self)
+        self.image_viewer.setGeometry(390, 20, 360, 360)
+        self.image_viewer.setAlignment(Qt.AlignCenter)
+        self.image_viewer.setScaledContents(True)
+
+        self.generate_random_btn = QPushButton('Generate Random', self)
+        self.generate_random_btn.setGeometry(20, 320, 350, 30)
+        self.generate_random_btn.clicked.connect(self.generate_random_image)
 
     def set_controller(self, controller: Controller):
         self.controller = controller
@@ -65,6 +81,14 @@ class View(QMainWindow):
 
     def set_model_dir(self, path: str):
         self.network_path.setText(path)
+
+    def set_image(self, image_path: str):
+        pixmap = QPixmap(image_path).scaled(
+            360, 360, Qt.AspectRatioMode.KeepAspectRatio)
+        self.image_viewer.setPixmap(pixmap)
+
+    def set_seeds(self, seeds: str):
+        self.seeds_edit.setText(seeds)
 
     def browse_model(self):
         file_dialog = QFileDialog()
@@ -78,7 +102,21 @@ class View(QMainWindow):
             self, 'Select Output Directory')
         self.controller.set_output_path(output_path)
 
-    def generate_image(self):
+    def generate_random_image(self):
+        self.generate_random_btn.setEnabled(False)
+        r = random.randint(1, 99999)
+        self.controller.generate_image([r])
+        self.generate_random_btn.setEnabled(True)
+
+    def generate_image_from_seed(self):
         self.generate_btn.setEnabled(False)
-        self.controller.generate_image()
+        r = random.randint(1, 99999)
+        s = self.validate_int(self.seeds_edit.text(), default=r)
+        self.controller.generate_image([s])
         self.generate_btn.setEnabled(True)
+
+    def validate_int(self, value, default=None):
+        try:
+            return int(value) if value else default
+        except ValueError:
+            return default
