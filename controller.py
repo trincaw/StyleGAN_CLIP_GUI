@@ -15,7 +15,7 @@ class Controller:
         self.generator.set_model_dir(path)
 
     def set_output_path(self, path):
-        # self.view.set_output_dir(path)
+        self.view.set_output_dir(path)
         self.generator.set_output_dir(path)
 
     def set_default_paths(self):
@@ -26,7 +26,8 @@ class Controller:
         self.set_output_path(output_path)
 
     def generate_image(self):
-        seeds = self.validate_int(self.view.seeds_edit.text(), default=[1])
+        s = self.validate_int(self.view.seeds_edit.text(), default=[1])
+        seeds = [s]
         truncation_psi = self.validate_float(
             self.view.trunc_edit.text(), default=0.7)
         noise_mode = 'const' if self.view.noise_edit.text(
