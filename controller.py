@@ -26,8 +26,7 @@ class Controller:
         self.set_output_path(output_path)
 
     def generate_image(self):
-
-        seeds = self.validate_int(self.view.seeds_edit.text(), default=1)
+        seeds = self.validate_int(self.view.seeds_edit.text(), default=[1])
         truncation_psi = self.validate_float(
             self.view.trunc_edit.text(), default=0.7)
         noise_mode = 'const' if self.view.noise_edit.text(

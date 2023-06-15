@@ -46,7 +46,6 @@ class styleGan:
 
     def generate_images(self, seeds: List[int], truncation_psi: float, noise_mode: str, translate: Tuple[float, float], rotate: float, class_idx: Optional[int]):
         print('Loading networks from "%s"...' % self.network_pkl)
-        print(seeds, truncation_psi, noise_mode, translate, rotate, class_idx)
         device = torch.device('cuda')
         with dnnlib.util.open_url(self.network_pkl) as f:
             G = legacy.load_network_pkl(f)['G_ema'].to(device)  # type: ignore
@@ -64,7 +63,8 @@ class styleGan:
             if class_idx is not None:
                 print(
                     'warn: --class=lbl ignored when running on an unconditional network')
-
+        print(seeds, truncation_psi,
+              noise_mode, translate, rotate, class_idx)
         # Generate images.
         for seed_idx, seed in enumerate(seeds):
             print('Generating image for seed %d (%d/%d) ...' %
@@ -92,7 +92,7 @@ class styleGan:
 
 # if __name__ == "__main__":
 #     # Example usage:
-#     network_pkl = "C:\\Users\\nico\\Doc\\GUI\\network-snapshot-012000.pkl"
+#     network_pkl = "C:\\Users\\nico\\Doc\\StyleGAN_CLIP_GUI\\network-snapshot-012000.pkl"
 #     seeds = [0, 1]
 #     truncation_psi = 1
 #     noise_mode = "const"
@@ -101,6 +101,8 @@ class styleGan:
 #     rotate = 0
 #     class_idx = None
 
-#     generator = styleGan(network_pkl, outdir)
+#     generator = styleGan()
+#     generator.set_model_dir(network_pkl)
+#     generator.set_output_dir(outdir)
 #     generator.generate_images(seeds, truncation_psi,
 #                               noise_mode, translate, rotate, class_idx)
