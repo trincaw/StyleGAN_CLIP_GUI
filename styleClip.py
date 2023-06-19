@@ -42,10 +42,11 @@ class styleClip(object):
             texts, steps, seed, render_video, save_every))
         t1.start()
 
-    def run(self, texts, steps=10, seed=14, render_video=False, save_every=2):
+    def run(self, texts, steps, seed, render_video, save_every):
 
         torch.manual_seed(seed)
-        print(f"Running styleclip for seed: {seed}")
+        print(
+            f"Running styleclip for seed: {seed}, texts: {texts}, steps: {steps}")
 
         targets = self.get_targets(texts)
 

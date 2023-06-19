@@ -14,11 +14,8 @@ class controller:
 
     def load_network(self, path):
         device = torch.device('cuda:0')
-        print("init styleGan")
         self.s_gan.load_network(device, path)
-        print("init Clip")
         clip_model = myclip(device)
-        print("init styleClip")
         self.s_clip = styleClip(device, self, clip_model, self.s_gan)
 
     def set_output_path(self, path):
@@ -45,7 +42,7 @@ class controller:
         self.view.set_image(img_path)
 
     def generate_image_from_text(self, text, seed):
-        self.s_clip.work_run(texts=text, steps=15, seed=seed,
+        self.s_clip.work_run(texts=text, steps=30, seed=seed,
                              render_video=False, save_every=2)
         # self.s_clip.run(texts=text, steps=50,
         #                 seed=seed, render_video=False, save_every=2)
