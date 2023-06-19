@@ -94,7 +94,7 @@ class view(QMainWindow):
         file_dialog = QFileDialog()
         file_path, _ = file_dialog.getOpenFileName(
             self, 'Select Model PKL File', '', 'PKL Files (*.pkl)')
-        self.controller.set_model_path(file_path)
+        self.controller.load_network(file_path)
 
     def browse_output_path(self):
         file_dialog = QFileDialog()

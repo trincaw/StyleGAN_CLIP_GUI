@@ -9,6 +9,7 @@
 """Generate images using pretrained network pickle."""
 
 import os
+import pickle
 from typing import List, Optional, Tuple
 
 import dnnlib
@@ -37,9 +38,19 @@ def make_transform(translate: Tuple[float, float], angle: float):
 
 
 class styleGan:
+    def __init__(self):
+        self.device = torch.device('cuda:0')
 
-    def set_model_dir(self, network_pkl):
-        self.network_pkl = network_pkl
+    def load_network(self, network_path):
+        self.network_pkl = network_path
+        with open(network_path, 'rb') as fp:
+            G = pickle.load(fp)['G_ema'].to(self.device)
+
+            zs = torch.randn([10000, G.mapping.z_dim], device=self.device)
+            w_stds = G.mapping(zs, None).std(0)
+            self.w_stds = w_stds
+            self.G = G
+            return G, w_stds
 
     def set_output_dir(self, outdir):
         self.outdir = outdir
