@@ -12,12 +12,9 @@ import os
 import pickle
 from typing import List, Optional, Tuple
 
-import dnnlib
 import numpy as np
 import PIL.Image
 import torch
-
-import legacy
 
 
 # ----------------------------------------------------------------------------
@@ -38,10 +35,9 @@ def make_transform(translate: Tuple[float, float], angle: float):
 
 
 class styleGan:
-    def __init__(self):
-        self.device = torch.device('cuda:0')
 
-    def load_network(self, network_path):
+    def load_network(self, device, network_path):
+        self.device = device
         self.network_pkl = network_path
         with open(network_path, 'rb') as fp:
             G = pickle.load(fp)['G_ema'].to(self.device)
@@ -56,16 +52,12 @@ class styleGan:
         self.outdir = outdir
 
     def generate_images(self, seeds: List[int], truncation_psi: float, noise_mode: str, translate: Tuple[float, float], rotate: float, class_idx: Optional[int]):
-        print('Loading networks from "%s"...' % self.network_pkl)
-        device = torch.device('cuda')
-        with dnnlib.util.open_url(self.network_pkl) as f:
-            G = legacy.load_network_pkl(f)['G_ema'].to(device)  # type: ignore
 
         os.makedirs(self.outdir, exist_ok=True)
 
         # Labels.
-        label = torch.zeros([1, G.c_dim], device=device)
-        if G.c_dim != 0:
+        label = torch.zeros([1, self.G.c_dim], device=self.device)
+        if self.G.c_dim != 0:
             if class_idx is None:
                 raise ValueError(
                     'Must specify class label with --class when using a conditional network')
@@ -81,18 +73,18 @@ class styleGan:
             print('Generating image for seed %d (%d/%d) ...' %
                   (seed, seed_idx, len(seeds)))
             z = torch.from_numpy(np.random.RandomState(
-                seed).randn(1, G.z_dim)).to(device)
+                seed).randn(1, self.G.z_dim)).to(self.device)
 
             # Construct an inverse rotation/translation matrix and pass it to the generator.
             # The generator expects this matrix as an inverse to avoid potentially failing numerical
             # operations in the network.
-            if hasattr(G.synthesis, 'input'):
+            if hasattr(self.G.synthesis, 'input'):
                 m = make_transform(translate, rotate)
                 m = np.linalg.inv(m)
-                G.synthesis.input.transform.copy_(torch.from_numpy(m))
+                self.G.synthesis.input.transform.copy_(torch.from_numpy(m))
 
-            img = G(z, label, truncation_psi=truncation_psi,
-                    noise_mode=noise_mode)
+            img = self.G(z, label, truncation_psi=truncation_psi,
+                         noise_mode=noise_mode)
             img = (img.permute(0, 2, 3, 1) * 127.5 +
                    128).clamp(0, 255).to(torch.uint8)
             PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(

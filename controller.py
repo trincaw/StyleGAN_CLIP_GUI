@@ -1,3 +1,6 @@
+import torch
+from myclip import myclip
+from styleClip import styleClip
 from styleGan import styleGan
 import os
 
@@ -10,7 +13,19 @@ class controller:
         self.set_default_paths()
 
     def load_network(self, path):
-        self.generator.load_network(path)
+        print("init styleGan")
+        self.device = torch.device('cuda:0')
+        self.generator.load_network(self.device, path)
+
+    def init_styleClip(self):
+
+        print("init Clip")
+        clip_model = myclip(self.device)
+        print("init styleClip")
+        sc = styleClip(self.device, clip_model, self.generator)
+        print("run styleClip")
+        sc.run(texts="a brown jacket", steps=50,
+               seed=14, render_video=False, save_every=2)
 
     def set_output_path(self, path):
         self.view.set_output_dir(path)
@@ -23,13 +38,14 @@ class controller:
         self.set_output_path(output_path)
 
     def generate_image(self, seed, truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx):
-        self.view.set_seeds(str(seed[0]))
-        print(seed, truncation_psi, noise_mode,
-              translate_x, translate_y, rotate, class_idx)
-        # try:
-        img_path = self.generator.generate_images(seed, truncation_psi,
-                                                  noise_mode, (translate_x, translate_y), rotate, class_idx)
-        # except Exception as e:
-        #     error_message = f"Error occurred during image generation:\n{str(e)}"
-        #     QMessageBox.critical(self.view, "Error", error_message)
-        self.view.set_image(img_path)
+        # self.view.set_seeds(str(seed[0]))
+        # print(seed, truncation_psi, noise_mode,
+        #       translate_x, translate_y, rotate, class_idx)
+        # # try:
+        # img_path = self.generator.generate_images(seed, truncation_psi,
+        #                                           noise_mode, (translate_x, translate_y), rotate, class_idx)
+        # # except Exception as e:
+        # #     error_message = f"Error occurred during image generation:\n{str(e)}"
+        # #     QMessageBox.critical(self.view, "Error", error_message)
+        # self.view.set_image(img_path)
+        self.init_styleClip()
