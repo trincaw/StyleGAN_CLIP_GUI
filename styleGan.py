@@ -48,12 +48,12 @@ class styleGan:
             self.G = G
             return G, w_stds
 
-    def set_output_dir(self, outdir):
-        self.outdir = outdir
+    def set_output_dir(self, output_path):
+        self.output_path = output_path
 
-    def generate_images(self, seeds: List[int], truncation_psi: float, noise_mode: str, translate: Tuple[float, float], rotate: float, class_idx: Optional[int]):
-
-        os.makedirs(self.outdir, exist_ok=True)
+    def generate_images(self, seeds: List[int], truncation_psi: float, noise_mode: str, translate: Tuple[float, float], rotate: float, class_idx: Optional[int], output_path="output"):
+        self.set_output_dir(output_path)
+        os.makedirs(self.output_path, exist_ok=True)
 
         # Labels.
         label = torch.zeros([1, self.G.c_dim], device=self.device)
@@ -88,9 +88,9 @@ class styleGan:
             img = (img.permute(0, 2, 3, 1) * 127.5 +
                    128).clamp(0, 255).to(torch.uint8)
             PIL.Image.fromarray(img[0].cpu().numpy(), 'RGB').save(
-                f'{self.outdir}/seed{seed:04d}.png')
+                f'{self.output_path}/seed{seed:04d}.png')
         s = seeds[0]
-        img_path = f'{self.outdir}/seed{s:04d}.png'
+        img_path = f'{self.output_path}/seed{s:04d}.png'
         return img_path
 
 # ----------------------------------------------------------------------------
@@ -102,13 +102,13 @@ class styleGan:
 #     seeds = [0, 1]
 #     truncation_psi = 1
 #     noise_mode = "const"
-#     outdir = "output_images"
+#     output_path = "output_images"
 #     translate = (0.0, 0.0)
 #     rotate = 0
 #     class_idx = None
 
 #     generator = styleGan()
 #     generator.set_model_dir(network_pkl)
-#     generator.set_output_dir(outdir)
+#     generator.set_output_dir(output_path)
 #     generator.generate_images(seeds, truncation_psi,
 #                               noise_mode, translate, rotate, class_idx)

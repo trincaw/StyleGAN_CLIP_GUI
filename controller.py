@@ -1,4 +1,3 @@
-import sys
 import torch
 from myclip import myclip
 from styleClip import styleClip
@@ -45,9 +44,9 @@ class controller:
         #     QMessageBox.critical(self.view, "Error", error_message)
         self.view.set_image(img_path)
 
-    def generate_image_from_text(self, text="a brown jacket", seed=14):
-        print(text, seed)
-        self.s_clip.r()
+    def generate_image_from_text(self, text, seed):
+        self.s_clip.work_run(texts=text, steps=15, seed=seed,
+                             render_video=False, save_every=2)
         # self.s_clip.run(texts=text, steps=50,
         #                 seed=seed, render_video=False, save_every=2)
 

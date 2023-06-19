@@ -1,10 +1,10 @@
 import os
+import threading
 import torchvision.transforms.functional as TF
 import torch.nn.functional as F
 import torch
 import numpy as np
 import cv2
-from PyQt5.QtCore import QObject
 from threading import *
 
 
@@ -37,11 +37,12 @@ class styleClip(object):
         targets = [self.clip_model.embed_text(text) for text in texts]
         return targets
 
-    def r(self):
-        t1 = Thread(target=self.run)
+    def work_run(self, texts="a brown jacket", steps=10, seed=14, render_video=False, save_every=2):
+        t1 = threading.Thread(target=self.run, args=(
+            texts, steps, seed, render_video, save_every))
         t1.start()
 
-    def run(self, texts="a brown jacket", steps=10, seed=14, render_video=False, save_every=2):
+    def run(self, texts, steps=10, seed=14, render_video=False, save_every=2):
 
         torch.manual_seed(seed)
         print(f"Running styleclip for seed: {seed}")

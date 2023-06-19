@@ -107,7 +107,7 @@ class view(QMainWindow):
 
         s = self.validate_int(self.seeds_edit.text(), default=r)
         # if text:
-        self.controller.generate_image_from_text(text, s)
+        self.controller.generate_image_from_text(text=text, seed=s)
         self.enable_buttons()
 
     def browse_model(self):
