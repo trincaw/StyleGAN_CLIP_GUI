@@ -10,7 +10,7 @@ class view(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('StyleGAN GUI')
-        self.setGeometry(100, 100, 790, 400)
+        self.setGeometry(100, 100, 820, 430)
 
         self.network_path = QLineEdit(self)
         self.network_path.setGeometry(20, 20, 260, 30)
@@ -73,6 +73,14 @@ class view(QMainWindow):
         self.generate_random_btn.setGeometry(20, 320, 350, 30)
         self.generate_random_btn.clicked.connect(self.generate_random_image)
 
+        self.edit_text_btn = QPushButton('Edit', self)
+        self.edit_text_btn.setGeometry(220, 370, 150, 30)
+        self.edit_text_btn.clicked.connect(self.generate_with_text)
+
+        self.text_edit = QLineEdit(self)
+        self.text_edit.setGeometry(20, 370, 150, 30)
+        self.text_edit.setPlaceholderText('Text')
+
     def set_controller(self, controller: controller):
         self.controller = controller
 
@@ -90,6 +98,19 @@ class view(QMainWindow):
     def set_seeds(self, seeds: str):
         self.seeds_edit.setText(seeds)
 
+    def generate_with_text(self):
+
+        self.disable_buttons()
+        text = self.text_edit.text()
+
+        r = random.randint(1, 99999)
+
+        s = self.validate_int(self.seeds_edit.text(), default=r)
+        print(s)
+        if text:
+            self.controller.generate_image_from_text(text)
+        self.enable_buttons()
+
     def browse_model(self):
         file_dialog = QFileDialog()
         file_path, _ = file_dialog.getOpenFileName(
@@ -106,18 +127,18 @@ class view(QMainWindow):
     def generate_random_image(self):
         truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx = self.validate_generation()
 
-        self.generate_random_btn.setEnabled(False)
+        self.disable_buttons()
         r = random.randint(1, 99999)
 
         self.controller.generate_image(
             [r], truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx)
-        self.generate_random_btn.setEnabled(True)
+        self.enable_buttons()
 
     def generate_image_from_seed(self):
 
         truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx = self.validate_generation()
 
-        self.generate_btn.setEnabled(False)
+        self.disable_buttons()
         r = random.randint(1, 99999)
 
         s = self.validate_int(self.seeds_edit.text(), default=r)
@@ -125,7 +146,18 @@ class view(QMainWindow):
 
         self.controller.generate_image(
             [s], truncation_psi, noise_mode, translate_x, translate_y, rotate, class_idx)
+
+        self.enable_buttons()
+
+    def disable_buttons(self):
+        self.generate_btn.setEnabled(False)
+        self.generate_random_btn.setEnabled(False)
+        self.edit_text_btn.setEnabled(False)
+
+    def enable_buttons(self):
         self.generate_btn.setEnabled(True)
+        self.generate_random_btn.setEnabled(True)
+        self.edit_text_btn.setEnabled(True)
 
     def validate_generation(self):
 

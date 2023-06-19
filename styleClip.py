@@ -7,12 +7,16 @@ import cv2
 
 
 class styleClip(object):
-    def __init__(self, device, clip_model, stylegan_model, seed=-1, output_path="output"):
+    def __init__(self, device, controller, clip_model, stylegan_model, seed=-1, output_path="output"):
         self.device = device
         self.output_path = output_path
         self.clip_model = clip_model
+        self.controller = controller
         self.stylegan_model = stylegan_model
         self.seed = seed if seed != -1 else np.random.randint(0, 999999999)
+
+    def set_output_dir(self, output_path):
+        self.output_path = output_path
 
     def spherical_dist_loss(self, x, y):
         x = F.normalize(x, dim=-1)
@@ -61,7 +65,8 @@ class styleClip(object):
             if i % 10 == 0:
                 print(f"Image {i}/{steps} | Current loss: {loss}")
             if i % save_every == 0:
-                self.save_image(image, seed, i, self.output_path)
+                file_path = self.save_image(image, seed, i, self.output_path)
+                self.controller.update_image(file_path)
         if render_video:
             self.save_video(images, self.output_path)
 
@@ -95,7 +100,7 @@ class styleClip(object):
         file_path = os.path.join(output_folder, f'{i:04}.jpg')
         os.makedirs(output_folder, exist_ok=True)
         pil_image.save(file_path)
-        return pil_image
+        return file_path
 
     def save_video(self, images, output_path, fps=3):
         # Convert each image in the array to PIL Image format
