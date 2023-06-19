@@ -1,10 +1,8 @@
 from styleGan import styleGan
-from PyQt5.QtWidgets import QMessageBox
 import os
-import random
 
 
-class Controller:
+class controller:
     def __init__(self, view, generator: styleGan):
         self.view = view
         self.view.set_controller(self)

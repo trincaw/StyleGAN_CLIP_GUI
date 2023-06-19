@@ -1,12 +1,12 @@
 import sys
 from PyQt5.QtWidgets import QDoubleSpinBox, QMainWindow, QLabel, QPushButton, QFileDialog, QLineEdit, QMessageBox
-from controller import Controller
+from controller import controller
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import Qt
 import random
 
 
-class View(QMainWindow):
+class view(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle('StyleGAN GUI')
@@ -73,7 +73,7 @@ class View(QMainWindow):
         self.generate_random_btn.setGeometry(20, 320, 350, 30)
         self.generate_random_btn.clicked.connect(self.generate_random_image)
 
-    def set_controller(self, controller: Controller):
+    def set_controller(self, controller: controller):
         self.controller = controller
 
     def set_output_dir(self, path: str):

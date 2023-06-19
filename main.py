@@ -1,8 +1,7 @@
-from controller import Controller
 import sys
 from PyQt5.QtWidgets import QApplication
-from view import View
-from controller import Controller
+from view import view
+from controller import controller
 from styleGan import styleGan
 import os
 
@@ -11,9 +10,9 @@ import os
 if __name__ == '__main__':
     app = QApplication(sys.argv)
 
-    view = View()
-    styleGan = styleGan()
-    controller = Controller(view, styleGan)
+    v = view()
+    s = styleGan()
+    c = controller(v, s)
 
-    view.show()
+    v.show()
     sys.exit(app.exec_())
