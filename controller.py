@@ -1,3 +1,4 @@
+import sys
 import torch
 from myclip import myclip
 from styleClip import styleClip
@@ -45,8 +46,10 @@ class controller:
         self.view.set_image(img_path)
 
     def generate_image_from_text(self, text="a brown jacket", seed=14):
-        self.s_clip.run(texts=text, steps=50,
-                        seed=seed, render_video=False, save_every=2)
+        print(text, seed)
+        self.s_clip.r()
+        # self.s_clip.run(texts=text, steps=50,
+        #                 seed=seed, render_video=False, save_every=2)
 
     def update_image(self, img_path):
         self.view.set_image(img_path)

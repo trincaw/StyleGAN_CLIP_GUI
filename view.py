@@ -106,9 +106,8 @@ class view(QMainWindow):
         r = random.randint(1, 99999)
 
         s = self.validate_int(self.seeds_edit.text(), default=r)
-        print(s)
-        if text:
-            self.controller.generate_image_from_text(text)
+        # if text:
+        self.controller.generate_image_from_text(text, s)
         self.enable_buttons()
 
     def browse_model(self):
