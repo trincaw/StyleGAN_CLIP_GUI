@@ -54,7 +54,7 @@ class styleClip(object):
         q_ema = q
         opt = torch.optim.AdamW([q], lr=0.03, betas=(0.0, 0.999))
 
-        self.output_path = os.path.join(self.output_path, f'{seed}')
+        out = os.path.join(self.output_path, f'{seed}')
         images = [0 for _ in range(steps)]
         for i in range(steps):
             opt.zero_grad()
@@ -75,10 +75,10 @@ class styleClip(object):
             if i % 10 == 0:
                 print(f"Image {i}/{steps} | Current loss: {loss}")
             if i % save_every == 0:
-                file_path = self.save_image(image, seed, i, self.output_path)
+                file_path = self.save_image(image, seed, i, out)
                 self.controller.update_image(file_path)
         if render_video:
-            self.save_video(images, self.output_path)
+            self.save_video(images, out)
 
     def init_optimization(self, targets):
         with torch.no_grad():
