@@ -3,6 +3,7 @@
 ## Description
 StyleGAN_CLIP_GUI is a user-friendly software application tailored for artists, designers, and researchers. It harnesses the combined capabilities of StyleGAN2-ADA and CLIP to enable image creation, manipulation, and exploration. The graphical user interface (GUI) primarily integrates with StyleGAN for seamless image synthesis. Additionally, it incorporates a unique algorithm for latent vector editing with CLIP, significantly expanding the creative possibilities for StyleGAN-generated content.
 
+## Build
 | Item                           | Description                                      |
 |--------------------------------|--------------------------------------------------|
 | **Main programming language**  | Python 3.10                                      |
