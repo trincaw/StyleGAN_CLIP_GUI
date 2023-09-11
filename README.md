@@ -9,11 +9,11 @@ StyleGAN_CLIP_GUI is a user-friendly software application tailored for artists, 
 | **Main programming language**  | Python 3.10                                      |
 | **GPU computing platforms**    | Cuda 11.3                                       |
 | **GPU-accelerated library**    | cuDNN 7.3.1                                    |
-| **Python libraries**           |                                                |
+| **Python libraries**                                                         |
 | - GUI framework                | PyQT5 5.15.9                                   |
 | - Deep learning framework      | Pytorch 1.13                                   |
 | - Fundamental package for scientific computing | Numpy >=1.20                |
-| **Google Workspace**           |                                                |
+| **Google Workspace**                                                           |
 | - GPU                          | Nvidia Tesla T4 x1                             |
 | - Machine                      | n1-standard-2 (2 vCPUs, 7.5 GB memory)         |
 | - Disk                         | 100 GB                                         |
