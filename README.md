@@ -31,6 +31,14 @@ Go to the project path and follow the instructions:
  - ``` pip install einops ninja ```
  - ``` pip install -r requirements.txt ```
  - for other dependency check https://github.com/ouhenio/StyleGAN3-CLIP-notebooks
+Now add the model
+- Download the pretrained StyleGAN2 model (in .pkl format) from the StyleGAN3 repository or use a custom one.
+- Move the downloaded .pkl file to the main path of the StyleGAN_CLIP implementation.
+- Update the name of the model file in the code to match the newly placed .pkl file and adjust parameters.
+- Run with
+```.bash
+python main.py
+ ```
 
 ## Execution
 ```console
